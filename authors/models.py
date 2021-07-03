@@ -6,4 +6,7 @@ class Author(BaseModel):
     lastname = models.CharField(max_length=100)
     dob = models.DateField()
     dod = models.DateField(null=True)
-    nacionality = models.CharField(max_length=100)
+    nationality = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.firstname

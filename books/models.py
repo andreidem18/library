@@ -7,7 +7,8 @@ class Book(BaseModel):
     name = models.CharField(max_length=100)
     pages = models.IntegerField()
     genre = models.CharField(max_length=100)
-    editorial =  models.ForeignKey(
+    relased_date = models.DateField()
+    publisher =  models.ForeignKey(
         Publisher,
         on_delete=models.SET_NULL,
         null = True
@@ -16,3 +17,6 @@ class Book(BaseModel):
         Author,
         related_name='books'
     )
+
+    def __str__(self):
+        return self.name
