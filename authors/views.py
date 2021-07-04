@@ -12,6 +12,13 @@ class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
+    def  get_queryset(self):
+        data = {}
+        if self.request.query_params:
+            for k, v in self.request.query_params.items():
+                data[k] = v
+        return self.queryset.filter(**data)
+
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CreateAuthorSerializer

@@ -13,6 +13,13 @@ from authors.serializer import AuthorSerializer
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
+    def  get_queryset(self):
+        data = {}
+        if self.request.query_params:
+            for k, v in self.request.query_params.items():
+                data[k] = v
+        return self.queryset.filter(**data)
     
     @action(methods=['GET', 'POST', 'DELETE'], detail = True)
     def publisher(self, request, pk):
