@@ -12,6 +12,8 @@ class PublisherViewSet(ModelViewSet):
         data = {}
         if self.request.query_params:
             for k, v in self.request.query_params.items():
+                if k == 'page':
+                    continue
                 data[k] = v
         return self.queryset.filter(**data)
 

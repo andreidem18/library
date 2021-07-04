@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from authors.models import Author
 from rest_framework.decorators import action
 from rest_framework import status
+from django.core.mail import send_mail
 
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
@@ -16,6 +17,8 @@ class AuthorViewSet(ModelViewSet):
         data = {}
         if self.request.query_params:
             for k, v in self.request.query_params.items():
+                if k == 'page':
+                    continue
                 data[k] = v
         return self.queryset.filter(**data)
 
@@ -23,6 +26,16 @@ class AuthorViewSet(ModelViewSet):
         if self.request.method == 'POST':
             return CreateAuthorSerializer
         return super().get_serializer_class()
+
+    # def create(self, request, *args, **kwargs):
+    #     send_mail(
+    #         subject = "Info about library.api",
+    #         message = "You have been added in our system!",
+    #         from_email = "library@api.com",
+    #         recipient_list = [f"{request.data['firstname']}@gmail.com"],
+    #         fail_silently = False
+    #     )
+    #     return super().create(request, *args, **kwargs)
 
     @action(methods=['GET', 'POST', 'DELETE'], detail = True)
     def books(self, request, pk):

@@ -4,11 +4,12 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from publishers.serializer import PublisherSerializer
-from books.serializer import BookSerializer
+from books.serializer import BookSerializer, CreateBookSerializer
 from books.models import Book
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from authors.serializer import AuthorSerializer
+from django.core.mail import send_mail
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
@@ -18,8 +19,29 @@ class BookViewSet(ModelViewSet):
         data = {}
         if self.request.query_params:
             for k, v in self.request.query_params.items():
+                if k == 'page':
+                    continue
                 data[k] = v
         return self.queryset.filter(**data)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateBookSerializer
+        return super().get_serializer_class()
+
+    # def create(sellf, request, *args, **kwargs):
+    #     emails = list()
+    #     for author_id in request.data['authors']:
+    #         author = Author.objects.get(id = author_id)
+    #         emails.append(f"{author.firstname}@gmail.com")
+    #     send_mail(
+    #         subject = "Info from library.api",
+    #         message = f"Your book {request.data['name']} have been added in our system",
+    #         from_email = "library@api.com",
+    #         recipient_list = emails,
+    #         fail_silently = False
+    #     )
+    #     return super().create(request, *args, **kwargs)
     
     @action(methods=['GET', 'POST', 'DELETE'], detail = True)
     def publisher(self, request, pk):
