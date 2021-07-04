@@ -29,19 +29,19 @@ class BookViewSet(ModelViewSet):
             return CreateBookSerializer
         return super().get_serializer_class()
 
-    # def create(sellf, request, *args, **kwargs):
-    #     emails = list()
-    #     for author_id in request.data['authors']:
-    #         author = Author.objects.get(id = author_id)
-    #         emails.append(f"{author.firstname}@gmail.com")
-    #     send_mail(
-    #         subject = "Info from library.api",
-    #         message = f"Your book {request.data['name']} have been added in our system",
-    #         from_email = "library@api.com",
-    #         recipient_list = emails,
-    #         fail_silently = False
-    #     )
-    #     return super().create(request, *args, **kwargs)
+    def create(self, request, *args, **kwargs):
+        emails = list()
+        for author_id in request.data['authors']:
+            author = Author.objects.get(id = author_id)
+            emails.append(f"{author.firstname}@gmail.com")
+        send_mail(
+            subject = "Info from library.api",
+            message = f"Your book {request.data['name']} have been added in our system",
+            from_email = "library@api.com",
+            recipient_list = emails,
+            fail_silently = False
+        )
+        return super().create(request, *args, **kwargs)
     
     @action(methods=['GET', 'POST', 'DELETE'], detail = True)
     def publisher(self, request, pk):
