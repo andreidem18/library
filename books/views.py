@@ -10,10 +10,12 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from authors.serializer import AuthorSerializer
 from django.core.mail import send_mail
+from core.permissions import GeneralPermissions
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = (GeneralPermissions, )
 
     def  get_queryset(self):
         data = {}

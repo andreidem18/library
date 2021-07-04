@@ -8,10 +8,12 @@ from authors.models import Author
 from rest_framework.decorators import action
 from rest_framework import status
 from django.core.mail import send_mail
+from core.permissions import GeneralPermissions
 
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    permission_classes = (GeneralPermissions, )
 
     def  get_queryset(self):
         data = {}
