@@ -23,3 +23,9 @@ class ToPublishersBookSerializer(ModelSerializer):
     class Meta:
         model = Book
         fields = ('id', 'name', 'pages', 'genre', 'relased_date', 'authors')
+
+class ToAuthorsBookSerializer(ModelSerializer):
+
+    class Meta:
+        model = Book
+        fields = ('id', 'name', 'pages', 'genre', 'relased_date', 'publisher')
