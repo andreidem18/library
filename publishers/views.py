@@ -20,6 +20,6 @@ class PublisherViewSet(ModelViewSet):
         return self.queryset.filter(**data)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST': 
+        if self.request.method in ['POST', 'PUT']: 
             return CreatePublisherSerializer
         return PublisherSerializer

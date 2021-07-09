@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework import status
 from django.core.mail import send_mail
 from core.permissions import GeneralPermissions
+from authors.tasks import author_email
 
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
@@ -25,17 +26,13 @@ class AuthorViewSet(ModelViewSet):
         return self.queryset.filter(**data)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
+        if self.request.method in ['POST', 'PUT']:
             return CreateAuthorSerializer
         return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
-        send_mail(
-            subject = "Info about library.api",
-            message = "You have been added in our system!",
-            from_email = "library@api.com",
-            recipient_list = [f"{request.data['firstname']}@gmail.com"],
-            fail_silently = False
+        author_email.apply_async(
+            args=[f"{request.data['firstname']}@gmail.com"]
         )
         return super().create(request, *args, **kwargs)
 

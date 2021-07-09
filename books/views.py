@@ -1,3 +1,4 @@
+from books.tasks import book_email
 from authors.models import Author
 from publishers.models import Publisher
 from rest_framework import status
@@ -27,15 +28,18 @@ class BookViewSet(ModelViewSet):
         return self.queryset.filter(**data)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
+        if self.request.method in ['POST', 'PUT']:
             return CreateBookSerializer
         return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
         emails = list()
         for author_id in request.data['authors']:
-            author = Author.objects.get(id = author_id)
+            author = Author.objects.get(id = str(author_id))
             emails.append(f"{author.firstname}@gmail.com")
+        book_email.apply_async(
+            args= [emails, request.data['name']]
+        )
         send_mail(
             subject = "Info from library.api",
             message = f"Your book {request.data['name']} have been added in our system",
